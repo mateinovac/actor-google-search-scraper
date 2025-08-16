@@ -1,13 +1,15 @@
 const Apify = require('apify');
 const url = require('url');
+// REMOVED: The REQUIRED_PROXY_GROUP constant is no longer needed.
 const {
-    REQUIRED_PROXY_GROUP, GOOGLE_DEFAULT_RESULTS_PER_PAGE, DEFAULT_GOOGLE_SEARCH_DOMAIN_COUNTRY_CODE,
-    GOOGLE_SEARCH_DOMAIN_TO_COUNTRY_CODE, GOOGLE_SEARCH_URL_REGEX, SERP_PROVIDER_HEADER } = require('./consts');
+    GOOGLE_DEFAULT_RESULTS_PER_PAGE, DEFAULT_GOOGLE_SEARCH_DOMAIN_COUNTRY_CODE,
+    GOOGLE_SEARCH_DOMAIN_TO_COUNTRY_CODE, GOOGLE_SEARCH_URL_REGEX, SERP_PROVIDER_HEADER,
+} = require('./consts');
 const extractorsDesktop = require('./extractors/desktop');
 const extractorsMobile = require('./extractors/mobile');
 const {
     getInitialRequests, executeCustomDataFunction, getInfoStringFromResults, createSerpRequest,
-    logAsciiArt, createDebugInfo, ensureAccessToSerpProxy, saveResults,
+    logAsciiArt, createDebugInfo, saveResults, // REMOVED: ensureAccessToSerpProxy is no longer needed
 } = require('./tools');
 
 const { log } = Apify.utils;
@@ -25,13 +27,14 @@ Apify.main(async () => {
         csvFriendlyOutput,
     } = input;
 
-    // Check that user have access to SERP proxy.
-    await ensureAccessToSerpProxy();
+    // REMOVED: This custom check is no longer necessary.
+    // The Apify SDK will handle proxy validation automatically.
+    // await ensureAccessToSerpProxy();
     logAsciiArt();
 
-    const proxyConfiguration = await Apify.createProxyConfiguration({
-        groups: [REQUIRED_PROXY_GROUP],
-    });
+    // CHANGED: This now reads the proxy configuration directly from the actor input.
+    // This allows you to configure it in the Apify Console UI without changing the code.
+    const proxyConfiguration = await Apify.createProxyConfiguration(input.proxyConfiguration);
 
     // Create initial request list and queue.
     const initialRequests = getInitialRequests(input);
