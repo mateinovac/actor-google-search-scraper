@@ -533,6 +533,15 @@
           "sectionDescription": "Here you can specify further parameters of the scrape. However we worked hard to set the best options for you already."
 
       },
+       "proxyConfiguration": {
+      "title": "Proxy configuration",
+      "type": "object",
+      "description": "For Google scraping, the 'GOOGLE_SERP' proxy group is required. Please contact support@apify.com for access.",
+      "editor": "proxyConfiguration"
+    }
+  },
+  "required": ["queries"]
+},
       "languageCode": {
           "title": "Language",
           "type": "string",
