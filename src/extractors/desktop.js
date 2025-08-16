@@ -1,7 +1,11 @@
 const { ensureItsAbsoluteUrl } = require('./ensure_absolute_url');
 const { extractPeopleAlsoAsk, extractDescriptionAndDate } = require('./extractor_tools');
 
-exports.extractOrganicResults = ($) => {
+/**
+ * This is the original function, preserved as a fallback in case
+ * the new selectors don't work on a different Google page layout.
+ */
+const extractOrganicResultsOriginal = ($) => {
     // Executed on a single organic result (row)
     const parseResult = (el) => {
         // HOTFIX: Google is A/B testing a new dropdown, which causes invalid results.
@@ -89,7 +93,7 @@ exports.extractOrganicResults = ($) => {
     let searchResults = [];
     if ($(`${resultSelector2022January}`).length > 0) {
         searchResults = [...$(`${resultSelector2022January}`)].reduce((organicResultsSels, organicResultSel) => {
-            // We  fetch the list of sub organic results contained in one organic result section
+            // We fetch the list of sub organic results contained in one organic result section
             // It may be hijacking the siteLinks and flattening them into the organicResultsSels
             const subOrganicResultsSels = $(organicResultSel).map((_i, organicItem) => parseResult($(organicItem).parent())).toArray();
             organicResultsSels.push(...subOrganicResultsSels);
@@ -106,6 +110,49 @@ exports.extractOrganicResults = ($) => {
     }
 
     return searchResults;
+};
+
+/**
+ * This is the new, primary function for extracting organic results.
+ * It uses selectors that match the provided HTML file.
+ */
+exports.extractOrganicResults = ($) => {
+    const results = [];
+    // This selector targets each organic search result block.
+    $('#rso div.tF2Cxc').each((i, el) => {
+        const container = $(el);
+
+        const linkEl = container.find('div.yuRUbf a');
+        const url = linkEl.attr('href');
+        const title = container.find('h3.LC20lb').text();
+        const displayedUrl = container.find('cite').text();
+        const description = container.find('div.VwiC3b').text();
+        const emphasizedKeywords = container.find('em, b').map((_i, element) => $(element).text().trim()).toArray();
+
+        // SiteLinks and ProductInfo are not present in this modern layout, return empty
+        const siteLinks = [];
+        const productInfo = {};
+
+        if (title && url) {
+            results.push({
+                title,
+                url,
+                displayedUrl,
+                description,
+                emphasizedKeywords,
+                siteLinks,
+                productInfo,
+                position: i + 1,
+            });
+        }
+    });
+
+    // If the new selectors failed, call the original function as a fallback.
+    if (results.length === 0) {
+        return extractOrganicResultsOriginal($);
+    }
+
+    return results;
 };
 
 exports.extractPaidResults = ($) => {
