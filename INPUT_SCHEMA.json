@@ -533,15 +533,6 @@
           "sectionDescription": "Here you can specify further parameters of the scrape. However we worked hard to set the best options for you already."
 
       },
-       "proxyConfiguration": {
-      "title": "Proxy configuration",
-      "type": "object",
-      "description": "For Google scraping, the 'GOOGLE_SERP' proxy group is required. Please contact support@apify.com for access.",
-      "editor": "proxyConfiguration"
-    }
-  },
-  "required": ["queries"]
-},
       "languageCode": {
           "title": "Language",
           "type": "string",
@@ -763,7 +754,13 @@
           "description": "Custom JavaScript function to extract additional attributes from the HTML of the result pages. The function accepts the same parameters as the <code>handlePageFunction</code> of the <a href='https://sdk.apify.com/docs/typedefs/cheerio-crawler-options'>CheerioCrawler</a> in Apify SDK. The return value of the function is saved to the results as the <code>customData</code> property.",
           "editor": "javascript",
           "prefill": "async ({ input, $, request, response, html }) => {\n  return {\n    pageTitle: $('title').text(),\n  };\n};"
-      }
+      },
+      "proxyConfiguration": {
+      "title": "Proxy configuration",
+      "type": "object",
+      "description": "For Google scraping, the 'GOOGLE_SERP' proxy group is required. Please contact support@apify.com for access.",
+      "editor": "proxyConfiguration"
+    }
   },
-  "required": []
+  "required": ["queries"]
 }
