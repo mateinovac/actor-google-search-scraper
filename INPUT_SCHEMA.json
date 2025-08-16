@@ -759,7 +759,7 @@
       "title": "Proxy configuration",
       "type": "object",
       "description": "For Google scraping, the 'GOOGLE_SERP' proxy group is required. Please contact support@apify.com for access.",
-      "editor": "proxyConfiguration"
+      "editor": "proxy"
     }
   },
   "required": ["queries"]
